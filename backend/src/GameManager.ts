@@ -28,7 +28,23 @@ export class GameManager {
 
             if (message.type === INIT_GAME) {
                 if(this.pendingUser){
-                    const game = new Game(this.pendingUser, socket);
+                    const secondPlayerColor = message.payload?.color || 'black';
+                    const firstPlayerColor = secondPlayerColor === 'black' ? 'white' : 'black';
+                    
+                    const game = new Game(
+                        firstPlayerColor === 'white' ? this.pendingUser : socket,
+                        firstPlayerColor === 'black' ? this.pendingUser : socket
+                    );
+                    
+                    this.pendingUser.send(JSON.stringify({
+                        type: 'init_game',
+                        color: firstPlayerColor
+                    }));
+                    socket.send(JSON.stringify({
+                        type: 'init_game',
+                        color: secondPlayerColor
+                    }));
+                    
                     this.games.push(game);
                     this.pendingUser = null;
                 }

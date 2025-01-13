@@ -19,7 +19,7 @@ export class Game {
     let from: String;
     let to: String;
 
-    //validation of type of move using zod
+    //validation for type of move using zod
     if (this.board.moves.length % 2 === 0 && socket === this.player1) {
       return;
     }
@@ -51,7 +51,7 @@ export class Game {
     }
     else{
       this.player2.emit(JSON.stringify({
-         type: MO VE,
+         type: MOVE,
          payload: move
          }
         )
