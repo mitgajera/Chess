@@ -11,41 +11,43 @@ class Game {
         this.startTime = new Date();
     }
     makeMove(socket, move) {
-        let from;
-        let to;
         //validation for type of move using zod
-        if (this.board.moves.length % 2 === 0 && socket === this.player1) {
+        if (this.board.turn() === 'w' && socket === this.player2) {
+            console.log("Invalid move: Not white's turn");
             return;
         }
-        if (this.board.moves.length % 2 === 1 && socket === this.player2) {
+        if (this.board.turn() === 'b' && socket === this.player1) {
+            console.log("Invalid move: Not black's turn");
             return;
         }
         try {
             this.board.move(move);
+            // Send move to the opponent immediately after successful move
+            const moveMessage = JSON.stringify({
+                type: messages_1.MOVE,
+                payload: move
+            });
+            if (socket === this.player1) {
+                this.player2.send(moveMessage);
+            }
+            else {
+                this.player1.send(moveMessage);
+            }
         }
         catch (e) {
+            console.log("Invalid move:", e);
             return;
         }
         if (this.board.isGameOver()) {
-            this.player1.emit(JSON.stringify({
+            const gameOverMessage = JSON.stringify({
                 type: messages_1.GAME_OVER,
                 payload: {
                     winner: this.board.turn() === "w" ? "black" : "white"
                 }
-            }));
+            });
+            this.player1.send(gameOverMessage);
+            this.player2.send(gameOverMessage);
             return;
-        }
-        if (this.board.moves.length % 2 === 0) {
-            this.player1.emit(JSON.stringify({
-                type: messages_1.MOVE,
-                payload: move
-            }));
-        }
-        else {
-            this.player2.emit(JSON.stringify({
-                type: messages_1.MOVE,
-                payload: move
-            }));
         }
     }
 }

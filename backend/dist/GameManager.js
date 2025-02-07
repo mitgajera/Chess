@@ -26,11 +26,11 @@ class GameManager {
                     const firstPlayerColor = secondPlayerColor === 'black' ? 'white' : 'black';
                     const game = new Game_1.Game(firstPlayerColor === 'white' ? this.pendingUser : socket, firstPlayerColor === 'black' ? this.pendingUser : socket);
                     this.pendingUser.send(JSON.stringify({
-                        type: 'INIT_GAME',
+                        type: 'init_game',
                         color: firstPlayerColor
                     }));
                     socket.send(JSON.stringify({
-                        type: 'INIT_GAME',
+                        type: 'init_game',
                         color: secondPlayerColor
                     }));
                     this.games.push(game);
