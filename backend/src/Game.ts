@@ -19,6 +19,14 @@ export class Game {
     return this.board.isGameOver();
   }
 
+  public getStatus(): { gameOver: boolean; turn: string } {
+    return {
+      gameOver: this.checkGameOver(),
+      turn: this.board.turn(),
+    };
+  }
+
+
   makeMove(socket: WebSocket, move: string) {
     // Validation for type of move using zod
     if (this.board.turn() === 'w' && socket === this.player2) {
